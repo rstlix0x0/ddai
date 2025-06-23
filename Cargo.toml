@@ -1,0 +1,25 @@
+[package]
+name = "ddai"
+version = "0.1.0"
+edition = "2021"
+authors = ["rstlix0x0 <rstlix.dev@gmail.com>"]
+description = "A CLI tool to help implement DDD through an AI assistant."
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/rstlix0x0/ddai"
+repository = "https://github.com/rstlix0x0/ddai"
+keywords = ["cli", "tool", "utility", "ddd", "domain-driven-design", "ai"]
+categories = ["command-line-utilities", "text-processing", "development-tools"]
+
+[dependencies]
+serde = { version = "~1.0", features = ["derive"] }
+serde_json = { version = "~1.0" }
+thiserror = { version = "~2.0" }
+chrono = { version = "~0.4", features = ["serde"] }
+clap = { version = "~4.5", features = ["derive"] }
+tracing = { version = "~0.1" }
+tracing-subscriber = { version = "~0.3", features = ["json", "chrono", "env-filter"] }
+
+[dev-dependencies]
+mockall = { version = "~0.13" }
+tempfile = { version = "~3.20" }
