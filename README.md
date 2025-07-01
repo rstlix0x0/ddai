@@ -97,4 +97,4 @@ All available documents will implement versioning by following the `SemVer (Sema
 
 ### LLM Powered Business Interpretations
 
-By gathering all possible knowledge from both business and technical software engineering principles, `ddai` will empower *LLM* to interpret business domain knowledge and combine it with *RAG* technology, it will produce a "standard" DDD tactical design patterns.
+By gathering all possible knowledge from both business and technical software engineering principles, `ddai` will empower *LLM* to interpret business domain knowledge, it will produce a "standard" DDD tactical design patterns.
