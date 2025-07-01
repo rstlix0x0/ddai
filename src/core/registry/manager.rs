@@ -117,8 +117,8 @@ where
         match file_item_mut {
             Some(fi) => {
                 fi.update(version);
-                registry.add_file(fi.to_owned()); 
-            },
+                registry.add_file(fi.to_owned());
+            }
             None => {
                 registry.add_file(FileItem::new(file));
             }
