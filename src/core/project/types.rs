@@ -8,7 +8,6 @@ pub const PROJECT_DIR_NAME: &str = ".ddai";
 pub const PROJECT_FILE_NAME: &str = "project.json";
 pub const PROJECT_CREDENTIAL_NAME: &str = "credentials.json";
 pub const PROJECT_BUSINESS_DIR_NAME: &str = "businesses";
-pub const PROJECT_KNOWLEDGE_DIR_NAME: &str = "knowledges";
 pub const PROJECT_ARCHITECTURE_DIR_NAME: &str = "architectures";
 
 #[derive(Debug, Error)]

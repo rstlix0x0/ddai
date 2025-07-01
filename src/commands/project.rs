@@ -10,7 +10,6 @@ use crate::core::project::app::App as ProjectApp;
 use crate::core::project::types::{
     Builder, Project as CoreProject, ProjectError, PROJECT_ARCHITECTURE_DIR_NAME,
     PROJECT_BUSINESS_DIR_NAME, PROJECT_CREDENTIAL_NAME, PROJECT_DIR_NAME, PROJECT_FILE_NAME,
-    PROJECT_KNOWLEDGE_DIR_NAME,
 };
 use crate::core::types::ToJSON;
 
@@ -99,18 +98,6 @@ impl ProjectBuilderImpl {
     }
 
     #[instrument(skip_all, err)]
-    fn create_knowledge_dir(&self, current_dir: PathBuf) -> Result<(), ProjectError> {
-        let knowledge_dir = current_dir.join(PROJECT_KNOWLEDGE_DIR_NAME);
-        debug!("Creating knowledge directory at: {:?}", knowledge_dir);
-
-        if !knowledge_dir.exists() {
-            let _ = create_dir(&knowledge_dir).map_err(|e| ProjectError::FsError(e))?;
-        }
-
-        Ok(())
-    }
-
-    #[instrument(skip_all, err)]
     fn create_architecture_dir(&self, current_dir: PathBuf) -> Result<(), ProjectError> {
         let architecture_dir = current_dir.join(PROJECT_ARCHITECTURE_DIR_NAME);
         debug!("Creating architecture directory at: {:?}", architecture_dir);
@@ -138,7 +125,6 @@ impl Builder for ProjectBuilderImpl {
         let _ = self.create_project_file(current_dir.clone(), json)?;
         let _ = self.manage_gitignore(current_dir.clone())?;
         let _ = self.create_business_dir(current_dir.clone())?;
-        let _ = self.create_knowledge_dir(current_dir.clone())?;
         let _ = self.create_architecture_dir(current_dir)?;
 
         Ok(())
