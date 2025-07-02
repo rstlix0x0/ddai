@@ -1,7 +1,7 @@
 use std::io::Error as IoError;
 use thiserror::Error;
 
-use crate::core::registry::types::{FileName, FileVersion, RegistryError, Directory};
+use crate::core::registry::types::{FileName, FileVersion, RegistryError};
 use crate::core::types::{CoreError, Validator};
 
 #[allow(dead_code)]
@@ -29,9 +29,6 @@ pub(crate) enum BusinessError {
 
     #[error("[business error] registry error: {0}")]
     RegistryError(#[from] RegistryError),
-
-    #[error("[business error] invalid parameters: {0}")]
-    InvalidParameters(String),
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -251,34 +248,9 @@ impl Validator for AnalyzeParameters {
 }
 
 #[allow(dead_code)]
-pub(crate) trait FsOperator {
-    /// DirPath is a type alias for a type that can be converted into a Directory.
-    ///
-    /// The directory path is used to specify the location of the business definitions in the filesystem.
-    type DirPath: Into<Directory>;
-
-    /// read_file is a method that reads the content of a file with the given name and version.
-    /// 
-    /// This method should be used to read the content of a file from the filesystem.
-    fn read_file(&self, name: FileName, version: FileVersion) -> Result<String, BusinessError>;
-
-    /// write_file is a method that writes the content to a file with the given name and version.
-    /// 
-    /// This method should be used to write the content to a file in the filesystem.
-    fn write_file(&self, name: FileName, version: FileVersion, content: &str) -> Result<(), BusinessError>;
-}
-
-#[allow(dead_code)]
 pub(crate) trait Processor {
     /// define is a method that defines a business definition with the given parameters.
     /// 
     /// This method should be used to create a business definition in the system. 
     fn define(&self, definition: Definition, version: FileVersion) -> Result<(), BusinessError>;
-
-    /// analyze is a method that analyzes a business definition with the given parameters.
-    /// 
-    /// This method will start to send all the necessary parameters to the AI model for analysis.
-    /// This method should not be used to open a file or read its content. The reading process 
-    /// should be handled by the caller.
-    fn analyze(&self, params: AnalyzeParameters) -> Result<(), BusinessError>;
 }

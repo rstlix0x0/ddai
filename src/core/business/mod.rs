@@ -1,2 +1,2 @@
-pub(crate) mod manager;
+pub(crate) mod app;
 pub(crate) mod types;
