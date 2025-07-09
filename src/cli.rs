@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 
+use crate::commands::business;
 use crate::commands::project;
 
 #[derive(Parser)]
@@ -16,4 +17,5 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum Commands {
     Project(project::ProjectArgs),
+    Business(business::BusinessArgs),
 }
