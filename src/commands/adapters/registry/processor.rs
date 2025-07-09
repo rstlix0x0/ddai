@@ -1,18 +1,24 @@
-use std::io::{BufWriter, BufReader};
 use std::fs::File;
+use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 
-use crate::core::registry::types::{Processor, RegistryError, Registry};
+use crate::core::registry::types::{Processor, Registry, RegistryError};
 
+#[derive(Debug, Clone)]
 pub(crate) struct ProcessorAdapter {}
+
+impl ProcessorAdapter {
+    pub fn new() -> Self {
+        ProcessorAdapter {}
+    }
+}
 
 impl Processor for ProcessorAdapter {
     fn build(&self, file_path: PathBuf, registry: Registry) -> Result<(), RegistryError> {
         let file = File::create(file_path).map_err(|e| RegistryError::FsError(e))?;
 
         let writer = BufWriter::new(file);
-        serde_json::to_writer(writer, &registry)
-            .map_err(|e| RegistryError::FsError(e.into()))?;
+        serde_json::to_writer(writer, &registry).map_err(|e| RegistryError::FsError(e.into()))?;
 
         Ok(())
     }
@@ -20,8 +26,8 @@ impl Processor for ProcessorAdapter {
     fn parse(&self, file_path: PathBuf) -> Result<Registry, RegistryError> {
         let file = File::open(file_path).map_err(|e| RegistryError::FsError(e))?;
         let reader = BufReader::new(file);
-        let registry: Registry = serde_json::from_reader(reader)
-            .map_err(|e| RegistryError::FsError(e.into()))?;
+        let registry: Registry =
+            serde_json::from_reader(reader).map_err(|e| RegistryError::FsError(e.into()))?;
         Ok(registry)
     }
 }
@@ -51,7 +57,7 @@ mod tests {
     fn test_processor_adapter_parse() {
         let temp_dir = tempfile::tempdir().unwrap();
         let file_path = temp_dir.path().join("registry.json");
-    
+
         let mut registry = Registry::new(Directory::from("businesses"));
         registry.add_file(FileItem::new(FileName::from("test_file.md")));
 
@@ -71,6 +77,9 @@ mod tests {
 
         let file_version = file_item.unwrap().get_last_version();
         assert!(file_version.is_some());
-        assert_eq!(file_version.unwrap().to_string(), REGISTRY_VERSION_GENESIS.to_string());
+        assert_eq!(
+            file_version.unwrap().to_string(),
+            REGISTRY_VERSION_GENESIS.to_string()
+        );
     }
 }

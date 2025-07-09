@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crate::core::types::PathBufWrapper;
 
+#[derive(Debug, Clone)]
 pub(crate) struct PathBufAdapter {
     pathbuf: PathBuf,
 }
@@ -18,10 +19,12 @@ impl PathBufWrapper for PathBufAdapter {
     }
 
     fn dir_name(&self) -> Option<String> {
-        self.pathbuf.file_name()
+        self.pathbuf
+            .file_name()
             .and_then(|name| name.to_str().map(String::from))
             .or_else(|| {
-                self.pathbuf.parent()
+                self.pathbuf
+                    .parent()
                     .and_then(|parent| parent.file_name())
                     .and_then(|name| name.to_str().map(String::from))
             })
@@ -44,7 +47,12 @@ mod tests {
         let adapter = PathBufAdapter::new(path.clone());
 
         assert_eq!(adapter.to_path_buf(), path);
-        assert_eq!(adapter.dir_name(), path.file_name().and_then(|name| name.to_str()).map(String::from));
+        assert_eq!(
+            adapter.dir_name(),
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .map(String::from)
+        );
         assert!(adapter.exists());
     }
 }

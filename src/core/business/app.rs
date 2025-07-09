@@ -5,7 +5,7 @@ use crate::core::registry::types::{FileVersion, Processor as RegistryProcessor};
 
 use crate::core::business::types::{BusinessError, Definition, Processor};
 
-#[allow(dead_code)]
+#[derive(Debug, Clone)]
 pub(crate) struct App<P, RP, PW>
 where
     P: Processor,
@@ -22,7 +22,6 @@ where
     RP: RegistryProcessor,
     PW: PathBufWrapper,
 {
-    #[allow(dead_code)]
     pub(crate) fn new(processor: P, registry: RegistryManager<RP, PW>) -> Self {
         App {
             processor,
@@ -30,7 +29,6 @@ where
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn define(
         &self,
         definition: Definition,
@@ -64,8 +62,8 @@ mod tests {
     use super::*;
     use mockall::{mock, predicate::eq};
 
-    use crate::core::registry::types::{Registry, RegistryError};
     use crate::core::business::types::{Definition, Processor};
+    use crate::core::registry::types::{Registry, RegistryError};
 
     mock!(
         FakeRegistryProcessor{}
@@ -96,7 +94,7 @@ mod tests {
 
     mod test_define {
         use super::*;
-        
+
         use crate::core::registry::types::{Directory, FileItem, FileName};
 
         #[test]

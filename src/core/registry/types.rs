@@ -5,21 +5,12 @@ use thiserror::Error;
 
 use crate::core::types::{CoreError, ToJSON, Validator};
 
-#[allow(dead_code)]
 pub(crate) const REGISTRY_VERSION_GENESIS: &str = "0.1.0";
 
-#[allow(dead_code)]
 pub(crate) const REGISTRY_FILE_NAME: &str = "registry.json";
 
 #[derive(Error, Debug)]
-#[allow(dead_code)]
 pub(crate) enum RegistryError {
-    #[error("[registry error] invalid version: {0}")]
-    InvalidVersion(String),
-
-    #[error("[registry error] file not found")]
-    FileNotFound,
-
     #[error("[registry error] filesystem error: {0}")]
     FsError(#[from] std::io::Error),
 
@@ -31,14 +22,8 @@ pub(crate) enum RegistryError {
 pub(crate) struct FileName(String);
 
 impl FileName {
-    #[allow(dead_code)]
     pub fn as_str(&self) -> &str {
         &self.0
-    }
-
-    #[allow(dead_code)]
-    pub fn to_string(&self) -> String {
-        self.0.to_owned()
     }
 }
 
@@ -58,7 +43,6 @@ impl From<&str> for FileName {
 pub(crate) struct FileVersion(String);
 
 impl FileVersion {
-    #[allow(dead_code)]
     pub fn new() -> Self {
         FileVersion::from(REGISTRY_VERSION_GENESIS)
     }
@@ -68,7 +52,6 @@ impl FileVersion {
         &self.0
     }
 
-    #[allow(dead_code)]
     pub fn to_string(&self) -> String {
         self.0.to_owned()
     }
@@ -145,18 +128,6 @@ impl From<&str> for FileVersion {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub(crate) struct Directory(String);
 
-impl Directory {
-    #[allow(dead_code)]
-    pub(crate) fn as_str(&self) -> &str {
-        &self.0
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn to_string(&self) -> String {
-        self.0.to_owned()
-    }
-}
-
 impl From<String> for Directory {
     fn from(dir: String) -> Self {
         Directory(dir)
@@ -176,7 +147,6 @@ pub(crate) struct FileItem {
 }
 
 impl FileItem {
-    #[allow(dead_code)]
     pub(crate) fn new(name: FileName) -> Self {
         let mut versions = Vec::<FileVersion>::new();
         versions.push(FileVersion::new());
@@ -192,7 +162,6 @@ impl FileItem {
         self.versions.last().and_then(|val| Some(val.to_owned()))
     }
 
-    #[allow(dead_code)]
     pub(crate) fn update(&mut self, version: FileVersion) {
         if !self.versions.contains(&version) {
             self.versions.push(version);
@@ -239,7 +208,6 @@ pub(crate) struct Registry {
 }
 
 impl Registry {
-    #[allow(dead_code)]
     pub(crate) fn new(directory: Directory) -> Self {
         Registry {
             directory,
@@ -247,13 +215,11 @@ impl Registry {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn remove_file(&mut self, file_name: &FileName) {
         self.files.retain(|file| &file.name != file_name);
     }
 
     /// Adds a file to the registry. If the file already exists, it updates its versions.
-    #[allow(dead_code)]
     pub(crate) fn add_file(&mut self, file: FileItem) {
         let filter_file = self.files.iter().find(|f| f.name == file.name);
 
@@ -270,7 +236,6 @@ impl Registry {
         }
     }
 
-    #[allow(dead_code)]
     pub(crate) fn get_file(&self, file_name: &FileName) -> Option<&FileItem> {
         self.files.iter().find(|file| &file.name == file_name)
     }
@@ -282,7 +247,6 @@ impl ToJSON for Registry {}
 ///
 /// It includes methods for building a registry from a file path and a registry object,
 /// as well as parsing a registry file to create a [`Registry`] object.
-#[allow(dead_code)]
 pub(crate) trait Processor {
     fn build(&self, file_path: PathBuf, registry: Registry) -> Result<(), RegistryError>;
     fn parse(&self, file_path: PathBuf) -> Result<Registry, RegistryError>;

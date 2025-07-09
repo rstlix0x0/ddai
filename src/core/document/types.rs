@@ -1,5 +1,5 @@
-use std::io::{BufReader, BufWriter};
 use std::fs::File;
+use std::io::{BufReader, BufWriter};
 use std::path::PathBuf;
 
 use thiserror::Error;
@@ -44,10 +44,10 @@ pub(crate) type FileWriter = BufWriter<File>;
 
 #[allow(dead_code)]
 /// FsProcessor trait is an abstraction of a document processor,
-/// specifically to handle filesystem operations and document processing tasks. 
+/// specifically to handle filesystem operations and document processing tasks.
 pub(crate) trait FsProcessor {
     /// Reads a document from the specified path.
-    /// 
+    ///
     /// The read operator should not return diretyly the document,
     /// but a buffered reader that can be used to read the document in chunks.
     fn read(&self, path: FilePath) -> Result<FileReader, DocumentError>;

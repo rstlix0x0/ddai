@@ -1,20 +1,27 @@
-use std::fs::{File, create_dir_all};
+use std::fs::{create_dir_all, File};
 
-use crate::core::types::PathBufWrapper;
+use crate::core::business::types::{BusinessError, Definition, Processor};
 use crate::core::registry::types::FileVersion;
-use crate::core::business::types::{Processor, BusinessError, Definition};
+use crate::core::types::PathBufWrapper;
 
+#[derive(Debug, Clone)]
 pub(crate) struct ProcessorAdapter<T: PathBufWrapper> {
     pathbuf: T,
 }
 
-impl<T> ProcessorAdapter<T> where T: PathBufWrapper {
+impl<T> ProcessorAdapter<T>
+where
+    T: PathBufWrapper,
+{
     pub fn new(pathbuf: T) -> Self {
         ProcessorAdapter { pathbuf }
     }
 }
 
-impl<T> Processor for ProcessorAdapter<T> where T: PathBufWrapper {
+impl<T> Processor for ProcessorAdapter<T>
+where
+    T: PathBufWrapper,
+{
     fn define(&self, definition: Definition, version: FileVersion) -> Result<(), BusinessError> {
         // first check if the directory exists, if not create it
         // the directory is based on the "Definition" name
@@ -56,7 +63,9 @@ mod tests {
         let temp_dir_pathbuf_cloned = temp_dir_pathbuf.clone();
 
         let mut pathbuf = MockFakePathBufWrapper::new();
-        pathbuf.expect_to_path_buf().returning(move || temp_dir_pathbuf.clone());
+        pathbuf
+            .expect_to_path_buf()
+            .returning(move || temp_dir_pathbuf.clone());
         pathbuf.expect_exists().returning(|| true);
 
         let processor = ProcessorAdapter::new(pathbuf);

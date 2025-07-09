@@ -8,6 +8,7 @@ use crate::core::registry::types::{
 
 use crate::core::types::{validate, PathBufWrapper};
 
+#[derive(Debug, Clone)]
 pub(crate) struct Manager<T, P>
 where
     T: Processor,
@@ -95,7 +96,6 @@ where
     ///
     /// This method should be used when you want to update the version of an existing file in the registry
     /// When updating the registry, it should not add a new file item if it already exists
-    #[allow(dead_code)]
     pub(crate) fn update_registry(
         &self,
         file: FileName,

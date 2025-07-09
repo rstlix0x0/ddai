@@ -4,20 +4,10 @@ use thiserror::Error;
 use crate::core::registry::types::{FileName, FileVersion, RegistryError};
 use crate::core::types::{CoreError, Validator};
 
-#[allow(dead_code)]
-pub const BUSINESS_DIR_NAME: &str = "businesses";
+pub const BUSINESS_DIR_NAME: &str = "./businesses";
 
 #[derive(Debug, Error)]
 pub(crate) enum BusinessError {
-    #[allow(dead_code)]
-    #[error("[business error] business definition not found: {0}")]
-    NotFound(String),
-
-    #[allow(dead_code)]
-    #[error("[business error] business definition already exists: {0}")]
-    AlreadyExists(String),
-
-    #[allow(dead_code)]
     #[error("[business error] invalid business definition: {0}")]
     InvalidDefinition(String),
 
@@ -35,12 +25,10 @@ pub(crate) enum BusinessError {
 pub(crate) struct Definition(String);
 
 impl Definition {
-    #[allow(dead_code)]
     pub(crate) fn as_str(&self) -> &str {
         &self.0
     }
 
-    #[allow(dead_code)]
     pub(crate) fn to_filename(&self) -> FileName {
         FileName::from(self.as_str())
     }
@@ -72,18 +60,6 @@ impl Validator for Definition {
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Language(String);
-
-impl Language {
-    #[allow(dead_code)]
-    pub(crate) fn as_str(&self) -> &str {
-        &self.0
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn to_string(&self) -> String {
-        self.0.clone()
-    }
-}
 
 impl From<String> for Language {
     fn from(lang: String) -> Self {
@@ -138,18 +114,6 @@ impl Validator for Architecture {
 
 pub(crate) struct AdditionalPrompt(String);
 
-impl AdditionalPrompt {
-    #[allow(dead_code)]
-    pub(crate) fn as_str(&self) -> &str {
-        &self.0
-    }
-
-    #[allow(dead_code)]
-    pub(crate) fn to_string(&self) -> String {
-        self.0.clone()
-    }
-}
-
 impl From<String> for AdditionalPrompt {
     fn from(prompt: String) -> Self {
         AdditionalPrompt(prompt)
@@ -176,7 +140,7 @@ impl Validator for AdditionalPrompt {
 
 #[allow(dead_code)]
 /// AnalyzeParameters is a struct that holds the parameters required for analyzing a business definition.
-/// 
+///
 /// All of these parameters used to get the file content and send it to the AI model for analysis.
 /// When sending to the AI model, the parameters will be used to generate a prompt that includes
 /// the definition, version, language, architecture, and any additional prompt provided.
@@ -184,8 +148,8 @@ impl Validator for AdditionalPrompt {
 pub struct AnalyzeParameters {
     pub(crate) definition: Definition,
     pub(crate) version: FileVersion,
-    pub(crate) language: Language,
-    pub(crate) architecture: Architecture,
+    pub(crate) language: Option<Language>,
+    pub(crate) architecture: Option<Architecture>,
     pub(crate) additional_prompt: Option<String>,
     pub(crate) use_c4: bool,
     pub(crate) only_json: bool,
@@ -196,8 +160,8 @@ impl AnalyzeParameters {
     pub(crate) fn new(
         definition: Definition,
         version: FileVersion,
-        language: Language,
-        architecture: Architecture,
+        language: Option<Language>,
+        architecture: Option<Architecture>,
     ) -> Self {
         AnalyzeParameters {
             definition,
@@ -211,10 +175,7 @@ impl AnalyzeParameters {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn with_additional_prompt(
-        mut self,
-        additional_prompt: String,
-    ) -> Self {
+    pub(crate) fn with_additional_prompt(mut self, additional_prompt: String) -> Self {
         self.additional_prompt = Some(additional_prompt);
         self
     }
@@ -224,7 +185,7 @@ impl AnalyzeParameters {
         self.use_c4 = use_c4;
         self
     }
-    
+
     #[allow(dead_code)]
     pub(crate) fn with_only_json(mut self, only_json: bool) -> Self {
         self.only_json = only_json;
@@ -236,8 +197,16 @@ impl Validator for AnalyzeParameters {
     fn validate(&self) -> Result<(), CoreError> {
         self.definition.validate()?;
         self.version.validate()?;
-        self.language.validate()?;
-        self.architecture.validate()?;
+
+        self.language
+            .as_ref()
+            .map(|val| val.validate())
+            .unwrap_or(Ok(()))?;
+
+        self.architecture
+            .as_ref()
+            .map(|val| val.validate())
+            .unwrap_or(Ok(()))?;
 
         if let Some(prompt) = &self.additional_prompt {
             AdditionalPrompt::from(prompt.as_str()).validate()?;
@@ -247,10 +216,9 @@ impl Validator for AnalyzeParameters {
     }
 }
 
-#[allow(dead_code)]
 pub(crate) trait Processor {
     /// define is a method that defines a business definition with the given parameters.
-    /// 
-    /// This method should be used to create a business definition in the system. 
+    ///
+    /// This method should be used to create a business definition in the system.
     fn define(&self, definition: Definition, version: FileVersion) -> Result<(), BusinessError>;
 }
